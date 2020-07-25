@@ -77,5 +77,8 @@
     "through2": "^3.0.1",
     "tmp": "^0.1.0",
     "vinyl": "^2.2.0"
+  },
+  "dependencies": {
+    "request": "^2.88.2"
   }
 }

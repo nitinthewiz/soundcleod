@@ -101,15 +101,30 @@ function onMediaPaused() {
 function getTrackMetadata() {
   return new Promise((resolve) => {
     ipcMain.once('trackMetadata', (_, trackMetadata) => {
-      const title = parseTitle(this.window.getTitle())
+      const title = parseNowPlaying(this.window)
       if (title) {
-        resolve({ ...title, ...trackMetadata })
+        title.then(function(data){
+          console.log(data)
+          console.log(trackMetadata)
+          resolve({ ...data, ...trackMetadata })
+        })
       } else {
         resolve()
       }
     })
     this.window.webContents.send('getTrackMetadata')
   })
+}
+
+async function parseNowPlaying(window_obj) {
+  let title = await window_obj.webContents.executeJavaScript(`document.querySelector('.playbackSoundBadge__titleLink').title`, async function (result) {
+    return await result
+  })
+
+  let subtitle = await window_obj.webContents.executeJavaScript(`document.querySelector('.playbackSoundBadge__lightLink').title`, async function (result) {
+    return await result
+  })
+  return { title, subtitle }
 }
 
 function parseTitle(windowTitle) {

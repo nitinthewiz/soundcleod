@@ -19,6 +19,8 @@ const SoundCloud = require('./soundcloud')
 const touchBarMenu = require('./touch-bar-menu')
 const windowOpenPolicy = require('./window-open-policy')
 const windowState = require('electron-window-state')
+const fs = require('fs')
+const request = require('request')
 
 let mainWindow = null
 let aboutWindow = null
@@ -251,6 +253,24 @@ app.on('ready', () => {
       title,
       body: subtitle,
       icon: artworkURL
+    })
+    const url = "http://192.168.194.5:3000/nowplaying/1"
+    request.patch({
+      uri: url,
+      json: true,
+      body: { "artist": subtitle, "track": title, "artwork_url": artworkURL}
+    })
+    fs.writeFile(`${app.getPath('documents')}\\soundcleod.txt`, `${subtitle} - ${title}`, (err) => {
+        if (err) throw err
+    })
+    fs.writeFile(`${app.getPath('documents')}\\soundcleod_title.txt`, `${title}`, (err) => {
+        if (err) throw err
+    })
+    fs.writeFile(`${app.getPath('documents')}\\soundcleod_subtitle.txt`, `${subtitle}`, (err) => {
+        if (err) throw err
+    })
+    fs.writeFile(`${app.getPath('documents')}\\soundcleod_artwork.txt`, `${artworkURL}`, (err) => {
+        if (err) throw err
     })
   })
 
